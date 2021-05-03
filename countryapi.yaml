@@ -1,0 +1,109 @@
+openapi: "3.0.3"
+info:
+  title: "countryapi API"
+  description: "Provides summary and detailed information about countries."
+  version: "1.0.0"
+paths:
+  /countries:
+    get:
+      summary: "GET countries"
+      operationId: "getAllCountries"
+      description: "List all countries with `name` and `country_code`"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  countries:
+                    type: array
+                    description: A list of found items.
+                    items:
+                      $ref: "#/components/schemas/CountrySummary"
+  /countries/{name}:
+    get:
+      summary: "GET countries/{name}"
+      operationId: "getCountry"
+      parameters:
+        - name: "name"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+        "404":
+          $ref: "#/components/responses/NotFound"
+
+
+components:
+  responses:
+    NotFound:
+      description: "Not found"
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error:
+              message: "Not found."
+              code: 404
+  schemas:
+    CountrySummary:
+      type: object
+      description: "Represents the summary of a country information."
+      properties:
+        name:
+          type: string
+          description: "Country's name."
+          example: "Brazil"
+        country_code:
+          type: string
+          description: "Country code (2 letters representation)."
+          example: "BR"
+    Country:
+      type: object
+      description: "Country object."
+      properties:
+        name:
+          type: string
+          description: "Country's name."
+          example: "Brazil"
+        country_code:
+          type: string
+          description: "Country code (2 letters representation)."
+          example: "BR"
+        capital:
+          type: string
+          description: "Country's capital'."
+          example: "Brasilia"
+        population:
+          type: integer
+          format: int62
+          description: "Country's population'."
+          example: 213803022
+        flag_file_url:
+          type: string
+          description: "Flag file URL."
+          example: "https://restcountries.eu/data/bra.svg"
+    ErrorResponse:
+      properties:
+        error:
+          required:
+            - message
+            - code
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Not found."
+            code:
+              type: integer
+              example: 404
